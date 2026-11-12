@@ -148,7 +148,7 @@ a.btn{text-decoration:none;display:inline-block}
 <script id="page-script">
 (function(){
 var DOCS={
-  kk:"Kertas kerja",kkhema:"Kertas kerja (format HEMA)",skp:"Surat kelulusan dan peruntukan",ska:"Surat kelulusan menjalankan aktiviti",
+  kk:"Kertas kerja",borangc:"Borang C (kadar perbelanjaan HEP)",kkhema:"Kertas kerja (format HEMA)",skp:"Surat kelulusan dan peruntukan",ska:"Surat kelulusan menjalankan aktiviti",
   slkk:"Surat pernyataan sebab lewat kertas kerja",spin:"Surat kelulusan pindaan program",poster:"Poster / banner program",
   peserta:"Senarai peserta program",skprog:"Surat kelulusan program (dari HEP)",
   lbg:"Laporan bergambar program",lkew:"Laporan implikasi kewangan program",slsp:"Surat pernyataan sebab lewat surat-surat program"
@@ -157,6 +157,11 @@ var ROUTES={hema:"Hantar kepada HEMA",hep:"Hantar kepada HEP","hep-k":"Hantar ke
 var KEYNOTE={peserta:"Mesti dicop oleh penasihat program.",skprog:"Dikeluarkan oleh HEP. Tunggu kelulusan sebelum meneruskan.",spin:"Dikeluarkan oleh HEP. Tunggu kelulusan pindaan sebelum meneruskan."};
 var FROM_HEP={skprog:1,spin:1};
 var NOTE_RM0="Program tiada kewangan? Tulis RM0.00 di bahagian Implikasi Kewangan.";
+function kwNote(a){
+  if(a.wang===true)return "Mohon kewangan dari HEP: kira bahagian Implikasi Kewangan ikut kadar Borang C (Bahagian E).";
+  if(a.wang===false)return "Tiada kewangan dari HEP: tulis RM0.00 di bahagian Implikasi Kewangan.";
+  return "Mohon kewangan dari HEP? Kira Implikasi Kewangan ikut kadar Borang C. Tiada kewangan? Tulis RM0.00.";
+}
 var FILES={
   kk:{f:"kertas-kerja.docx",n:"SAMPLE KERTAS KERJA PROGRAM [NAMA].docx",pv:"kertas-kerja",pg:7,gd:"1QxOjeK-yz_cGBa6uylzJtgD5mw88CBPPANboiTEM_T4"},
   kkhema:{f:"contoh-kertas-kerja-hema.pdf",n:"Contoh Kertas Kerja HEMA - Harmoni Vibe.pdf",pv:"contoh-kertas-kerja-hema",pg:8},
@@ -166,6 +171,7 @@ var FILES={
   poster:{f:"contoh-poster.jpg",n:"Contoh Poster Harmoni.jpg",label:"Contoh",img:"templates/contoh-poster.jpg"},
   lbg:{f:"laporan-bergambar.docx",n:"SAMPLE LAPORAN BERGAMBAR PROGRAM [NAMA].docx",pv:"laporan-bergambar",pg:3,gd:"1nabh6JTAhOTVyaHVS0PccVhDnJc6iUkuVBeH77UglHI"},
   lkew:{f:"laporan-implikasi-kewangan.docx",n:"SAMPLE LAPORAN IMPLIKASI KEWANGAN PROGRAM [NAMA].docx",pv:"laporan-implikasi-kewangan",pg:1,gd:"10DS4HAT34IGqKwOYaOETKsBBYmUiKUcz-yKa2vZJokM"},
+  borangc:{f:"borang-c.pdf",n:"Borang C - HEP PKP 09 (Pindaan 2023).pdf",pv:"borang-c",pg:12,label:"Rujukan"},
   peserta:{f:"senarai-peserta.docx",n:"SAMPLE SENARAI KEHADIRAN PELAJAR PROGRAM [NAMA].docx",pv:"senarai-peserta",pg:2},
   slsp:{f:"surat-lewat-surat-program.docx",n:"SAMPLE SURAT PERNYATAAN SEBAB KELEWATAN SURAT-SURAT PROGRAM [NAMA].docx",pv:"surat-lewat-surat-program",pg:2,gd:"18baBfcIzhyiwieiDBQuoKEy4BdpQj9wnfQREy7vP6-k"}
 };
@@ -200,11 +206,11 @@ function steps(a){
     out.push({n:1,title:"Kertas kerja",when:"Sebelum program",items:[{id:"1-kk",key:"kkhema",note:ROUTES.hema}]});
     return out;
   }
-  out.push({n:1,title:"Kertas kerja",when:"Sebelum program",items:[{id:"1-kk",key:"kk",note:ROUTES.hep+". "+NOTE_RM0}]});
+  out.push({n:1,title:"Kertas kerja",when:"Sebelum program",items:[{id:"1-kk",key:"kk",note:ROUTES.hep+". "+kwNote(a)}].concat(a.wang===false?[]:[{id:"1-bc",key:"borangc",tag:"Rujukan",ref:true,note:"Rujuk Bahagian E untuk kadar maksimum setiap perbelanjaan."}])});
   var s2=[{id:"2-skp",key:"skp"}];
   if(a.outside)s2.push({id:"2-ska",key:"ska",note:"Program di luar UiTM. Hantar ke Bangunan Canselori bersama kertas kerja."});
   out.push({n:2,title:"Surat kelulusan",when:"Sebelum program",items:s2});
-  var s3=[{id:"3-kk",key:"kk",note:"Muat naik di MyHEP. "+NOTE_RM0},{id:"3-skp",key:"skp"}];
+  var s3=[{id:"3-kk",key:"kk",note:"Muat naik di MyHEP. "+kwNote(a)},{id:"3-skp",key:"skp"}];
   if(a.outside)s3.push({id:"3-ska",key:"ska",note:"Program di luar UiTM"});
   var l3=lewatItem("3-slkk","slkk",a);if(l3)s3.push(l3);
   if(a.pindaan)s3.push({id:"3-spin",key:"spin",tag:"Pindaan"});
@@ -227,7 +233,7 @@ function allItems(a){var r=[];steps(a).forEach(function(s){r=r.concat(s.items)})
 function tplBtn(key){
   var f=FILES[key];
   if(FROM_HEP[key])return '<span class="tpl none">Dari HEP</span>';
-  if(f)return '<button type="button" class="tpl" data-act="pv" data-k="'+key+'">'+(f.label?"Lihat contoh":"Lihat templat")+'</button>';
+  if(f)return '<button type="button" class="tpl" data-act="pv" data-k="'+key+'">'+(key==="borangc"?"Lihat Borang C":f.label?"Lihat contoh":"Lihat templat")+'</button>';
   return '<span class="tpl none">Tiada templat</span>';
 }
 function pages(f){var r=[];if(f.img)r.push(f.img);else for(var i=1;i<=f.pg;i++)r.push("preview/"+f.pv+"-"+i+".jpg");return r}
@@ -236,7 +242,7 @@ function openPreview(key,from){
   var f=FILES[key],m=document.getElementById("pv");if(!f||!m)return;lastFocus=from||null;
   var ext=f.f.split(".").pop().toUpperCase();
   document.getElementById("pv-title").textContent=DOCS[key];
-  document.getElementById("pv-meta").textContent=(f.img?"Gambar":ext==="PDF"?"Contoh PDF":"Templat Word")+(f.pg?" · "+f.pg+" halaman":"");
+  document.getElementById("pv-meta").textContent=(key==="borangc"?"Borang rasmi HEP (PDF)":f.img?"Gambar":ext==="PDF"?"Contoh PDF":"Templat Word")+(f.pg?" · "+f.pg+" halaman":"");
   var dl=document.getElementById("pv-dl");dl.href="templates/"+f.f;dl.setAttribute("download",f.n);
   dl.textContent="Muat turun "+(f.img?"gambar":ext==="DOCX"?"(Word)":"("+ext+")");
   var gd=document.getElementById("pv-gd");
@@ -269,6 +275,7 @@ function questions(a){
   var h='<div class="qs"><div class="q"><label class="ql">Kertas kerja dihantar kepada?</label>'+seg("route",[["hema","HEMA"],["hep","HEP"]],a.route)+'</div>';
   if(isHep(a)){
     h+='<div class="q"><label class="ql" for="q-date">Tarikh program</label><input type="date" id="q-date" value="'+esc(a.date||"")+'" style="max-width:220px"></div>'+
+       '<div class="q"><label class="ql">Mohon kewangan dari HEP?</label>'+seg("wang",[["true","Ya"],["false","Tidak"]],a.wang)+'</div>'+
        '<div class="q"><label class="ql">Lokasi program?</label>'+seg("outside",[["false","Dalam UiTM"],["true","Luar UiTM"]],a.outside)+'</div>'+
        '<div class="q"><label class="ql">Guna pengangkutan UiTM?</label>'+seg("transport",[["false","Tidak"],["true","Ya"]],a.transport)+'</div>'+
        '<div class="q"><label class="ql">Ada pindaan program?</label>'+seg("pindaan",[["false","Tiada"],["true","Ada"]],a.pindaan)+'</div>';
@@ -289,22 +296,42 @@ function deadlineBox(a){
 }
 
 function viewSemak(){
-  var a=ui.answers,n=allItems(a).length;
+  var a=ui.answers,n=allItems(a).filter(function(i){return !i.ref}).length;
   var h='<section class="panel"><div><h2>Apa yang program awak perlukan?</h2><p class="muted" style="margin:4px 0 0">Jawab soalan di bawah. Senarai dokumen dikemas kini serta-merta.</p></div>'+questions(a)+deadlineBox(a)+'</section>';
   h+='<section style="display:flex;flex-direction:column;gap:16px"><h2>'+n+' dokumen diperlukan</h2>'+renderSteps(a)+'</section>';
   return h;
 }
 
+var RATES=[
+ ["Makanan (aktiviti persatuan)","Minum pagi RM5.00 · Makan tengah hari RM7.50 · Makan malam RM7.50 seorang sehari (jumlah RM20.00)"],
+ ["Makanan (kursus/seminar/bengkel)","Sarapan, minum pagi, minum petang, minum malam RM3.00 · Makan tengah hari, makan malam RM5.00 seorang sehari"],
+ ["Jamuan makan VIP","RM12.00 seorang"],
+ ["Peralatan/keperluan program","RM4.00 seorang (maksimum 250 pelajar), tidak melebihi RM1,000.00"],
+ ["Percetakan","Maksimum RM400.00"],
+ ["Kain rentang","Maksimum RM250.00 seunit, tidak melebihi 3 unit"],
+ ["Backdrop","Tidak melebihi RM300.00"],
+ ["Cenderamata (jemputan luar)","RM50.00 – RM300.00"],
+ ["Laporan program & gambar","Tidak melebihi RM50.00"],
+ ["T-shirt","Tanpa kolar RM13.00 – RM15.00 · Berkolar maksimum RM23.00"],
+ ["Fasilitator","Pelajar RM15.00 sejam · Staf RM50.00 sejam"],
+ ["Penginapan","RM10.00 semalam seorang · UiTM: dorm RM5.00, bilik RM7.50 · Hotel maksimum RM50.00"]
+];
+function ratesBox(){
+  return '<div><h2>Kadar perbelanjaan Borang C</h2><p class="muted" style="margin:4px 0 0">Ringkasan kadar maksimum yang biasa digunakan untuk bahagian Implikasi Kewangan. Rujuk Borang C untuk senarai penuh dan syarat.</p></div>'+
+    '<div class="tlist">'+RATES.map(function(r){return '<div class="trow"><span class="dn">'+esc(r[0])+'</span><span style="flex:2 1 300px;min-width:0;font-size:14px;color:var(--muted)">'+esc(r[1])+'</span></div>'}).join("")+
+    '<div class="trow"><span class="dn">Borang C penuh (12 halaman)</span>'+tplBtn("borangc")+'</div></div>';
+}
 function viewTemplat(){
   var keys=Object.keys(DOCS),missing=keys.filter(function(k){return !FILES[k]});
   var h='<div><h2>Templat dan contoh surat</h2><p class="muted" style="margin:4px 0 0">Lihat templat dahulu, kemudian muat turun. Gantikan bahagian bertanda [....] dengan maklumat program.</p></div>';
-  h+='<div class="tlist">'+keys.filter(function(k){return FILES[k]}).map(function(k){return '<div class="trow"><span class="dn">'+esc(DOCS[k])+'</span>'+tplBtn(k)+'</div>'}).join("")+'</div>';
+  h+='<div class="tlist">'+keys.filter(function(k){return FILES[k]&&k!=="borangc"}).map(function(k){return '<div class="trow"><span class="dn">'+esc(DOCS[k])+'</span>'+tplBtn(k)+'</div>'}).join("")+'</div>';
   var hep=missing.filter(function(k){return FROM_HEP[k]});missing=missing.filter(function(k){return !FROM_HEP[k]});
   function row(k){return '<div class="trow"><div class="dn" style="display:flex;flex-direction:column;gap:2px"><span>'+esc(DOCS[k])+'</span>'+(KEYNOTE[k]?'<span class="muted" style="font-size:13px;font-weight:400">'+esc(KEYNOTE[k])+'</span>':"")+'</div>'+tplBtn(k)+'</div>'}
+  h+=ratesBox();
   h+='<div><h2>Dikeluarkan oleh HEP</h2><p class="muted" style="margin:4px 0 0">Surat ini tiada templat. Tunggu HEP mengeluarkannya selepas permohonan diluluskan.</p></div>';
   h+='<div class="tlist">'+hep.map(row).join("")+'</div>';
-  h+='<div><h2>Belum ada templat</h2><p class="muted" style="margin:4px 0 0">Dokumen ini tiada templat lagi. Rujuk Setiausaha.</p></div>';
-  h+='<div class="tlist">'+missing.map(row).join("")+'</div>';
+  if(missing.length){h+='<div><h2>Belum ada templat</h2><p class="muted" style="margin:4px 0 0">Dokumen ini tiada templat lagi. Rujuk Setiausaha.</p></div>';
+  h+='<div class="tlist">'+missing.map(row).join("")+'</div>';}
   if(false)h+='<div class="tlist">'+missing.map(function(k){return '<div class="trow"><span class="dn">'+esc(DOCS[k])+'</span>'+tplBtn(k)+'</div>'}).join("")+'</div>';
   return h;
 }
