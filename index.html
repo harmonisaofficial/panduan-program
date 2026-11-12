@@ -141,7 +141,7 @@ a.btn{text-decoration:none;display:inline-block}
 <div class="pv-box">
 <div class="pv-head"><div class="pv-ht"><h2 id="pv-title">Templat</h2><span id="pv-meta" class="muted"></span></div><button type="button" class="pv-x" id="pv-close" data-act="pvclose" aria-label="Tutup">✕</button></div>
 <div class="pv-body" id="pv-body"><div id="pv-pages"></div></div>
-<div class="pv-foot"><span class="muted pv-note">Pratonton ini anggaran. Fail sebenar mungkin sedikit berbeza susun aturnya.</span><span class="row"><button type="button" class="btn ghost" data-act="pvclose">Tutup</button><a class="btn" id="pv-dl" href="#" download>Muat turun</a></span></div>
+<div class="pv-foot"><span class="muted pv-note">Pratonton ini anggaran. Fail sebenar mungkin sedikit berbeza susun aturnya.</span><span class="row"><button type="button" class="btn ghost" data-act="pvclose">Tutup</button><a class="btn" id="pv-dl" href="#" download>Muat turun</a><a class="btn" id="pv-gd" href="#" target="_blank" rel="noopener" hidden>Buat salinan (Google Docs) ↗</a></span></div>
 </div>
 </div>
 
@@ -158,7 +158,7 @@ var KEYNOTE={peserta:"Mesti dicop oleh penasihat program.",skprog:"Dikeluarkan o
 var FROM_HEP={skprog:1,spin:1};
 var NOTE_RM0="Program tiada kewangan? Tulis RM0.00 di bahagian Implikasi Kewangan.";
 var FILES={
-  kk:{f:"kertas-kerja.docx",n:"SAMPLE KERTAS KERJA PROGRAM [NAMA].docx",pv:"kertas-kerja",pg:7},
+  kk:{f:"kertas-kerja.docx",n:"SAMPLE KERTAS KERJA PROGRAM [NAMA].docx",pv:"kertas-kerja",pg:7,gd:"1QxOjeK-yz_cGBa6uylzJtgD5mw88CBPPANboiTEM_T4"},
   kkhema:{f:"contoh-kertas-kerja-hema.pdf",n:"Contoh Kertas Kerja HEMA - Harmoni Vibe.pdf",pv:"contoh-kertas-kerja-hema",pg:8},
   skp:{f:"surat-kelulusan-peruntukan.docx",n:"SAMPLE SURAT PERMOHONAN KELULUSAN DAN PERUNTUKAN PROGRAM [NAMA].docx",pv:"surat-kelulusan-peruntukan",pg:2},
   ska:{f:"surat-kelulusan-luar-uitm.docx",n:"SAMPLE SURAT KELULUSAN PROGRAM LUAR UITM [NAMA].docx",pv:"surat-kelulusan-luar-uitm",pg:2},
@@ -236,6 +236,8 @@ function openPreview(key,from){
   document.getElementById("pv-meta").textContent=(f.img?"Gambar":ext==="PDF"?"Contoh PDF":"Templat Word")+(f.pg?" · "+f.pg+" halaman":"");
   var dl=document.getElementById("pv-dl");dl.href="templates/"+f.f;dl.setAttribute("download",f.n);
   dl.textContent="Muat turun "+(f.img?"gambar":ext==="DOCX"?"(Word)":"("+ext+")");
+  var gd=document.getElementById("pv-gd");
+  if(f.gd){gd.href="https://docs.google.com/document/d/"+f.gd+"/copy";gd.hidden=false;dl.className="btn ghost"}else{gd.hidden=true;dl.className="btn"}
   document.getElementById("pv-pages").innerHTML=pages(f).map(function(src,i,a){return '<figure><img src="'+src+'" alt="'+esc(DOCS[key])+', halaman '+(i+1)+' daripada '+a.length+'" loading="lazy">'+(a.length>1?'<figcaption>Halaman '+(i+1)+' / '+a.length+'</figcaption>':'')+'</figure>'}).join("");
   document.getElementById("pv-body").scrollTop=0;
   m.hidden=false;document.body.style.overflow="hidden";document.getElementById("pv-close").focus();
