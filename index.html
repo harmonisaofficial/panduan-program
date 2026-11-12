@@ -42,6 +42,8 @@ h2{font-family:var(--display);font-size:22px;font-weight:600;margin:0;text-wrap:
 h3{font-family:var(--display);font-size:17px;font-weight:600;margin:0}
 .muted{color:var(--muted)}
 .banner{display:flex;gap:10px;align-items:flex-start;background:var(--accent-soft);color:var(--ink);border-radius:12px;padding:12px 16px;font-size:14px}
+.banner.warn{background:var(--accent-soft);border-left:4px solid var(--accent)}
+.banner.ok{background:var(--ok-soft)}
 .status{font-size:13px;color:var(--muted);min-height:20px}
 /* Questions */
 .qs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
@@ -168,34 +170,50 @@ var FILES={
 
 function lsGet(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
 function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
-var ui={answers:lsGet("hp-answers",{route:"hep",outside:false,transport:false,pindaan:false}),open:lsGet("hp-open",null),confirmDel:null,editTpl:false,newOpen:false};
+try{localStorage.removeItem("hp-state");localStorage.removeItem("hp-open")}catch(e){}
+var ui={answers:lsGet("hp-answers",{route:"hep",date:"",outside:false,transport:false,pindaan:false})};
 if(ui.answers.route!=="hema")ui.answers.route="hep";
-var state=lsGet("hp-state",null)||{v:1,programs:[]};state.programs=state.programs||[];state.templates={};
-var canWrite=true,statusMsg="";
 
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
 function isHep(a){return a.route!=="hema"}
 
+function daysLeft(a){
+  if(!a.date)return null;
+  var d=new Date(a.date+"T00:00:00");if(isNaN(d))return null;
+  var t=new Date();t.setHours(0,0,0,0);
+  return Math.round((d-t)/86400000);
+}
+function lateState(a){var n=daysLeft(a);return n===null?null:n<30}
+function fmtDate(d){try{return d.toLocaleDateString("ms-MY",{day:"numeric",month:"long",year:"numeric"})}catch(e){return ""}}
+function lewatItem(id,key,a){
+  var l=lateState(a);
+  if(l===false)return null;
+  return l?{id:id,key:key,tag:"Lewat",note:"Diperlukan kerana kurang 30 hari sebelum program."}:{id:id,key:key,tag:"Jika lewat",note:"Hanya jika dihantar kurang 30 hari sebelum program."};
+}
 function steps(a){
   var out=[];
-  out.push({n:1,title:"Kertas kerja",when:"Sebelum program",items:[{id:"1-kk",key:isHep(a)?"kk":"kkhema",note:isHep(a)?ROUTES.hep+". "+NOTE_RM0:ROUTES.hema}]});
-  if(isHep(a)){
-    var s2=[{id:"2-skp",key:"skp"}];
-    if(a.outside)s2.push({id:"2-ska",key:"ska",note:"Program di luar UiTM. Hantar ke Bangunan Canselori bersama kertas kerja."});
-    out.push({n:2,title:"Surat kelulusan",when:"Sebelum program",items:s2});
-    var s3=[{id:"3-kk",key:"kk",note:"Muat naik di MyHEP. "+NOTE_RM0},{id:"3-skp",key:"skp"}];
-    if(a.outside)s3.push({id:"3-ska",key:"ska",note:"Program di luar UiTM"});
-    s3.push({id:"3-slkk",key:"slkk"});
-    if(a.pindaan)s3.push({id:"3-spin",key:"spin",opt:true});
-    s3.push({id:"3-poster",key:"poster"});
-    out.push({n:3,title:"Hantar di MyHEP",when:"Sebelum program",link:true,items:s3});
-    if(a.transport){
-      var s4=[{id:"4-peserta",key:"peserta"},{id:"4-skprog",key:"skprog"},{id:"4-slkk",key:"slkk"}];
-      if(a.pindaan)s4.push({id:"4-spin",key:"spin",opt:true});
-      out.push({n:4,title:"Pengangkutan UiTM",when:"Sebelum program",items:s4});
-    }
+  if(!isHep(a)){
+    out.push({n:1,title:"Kertas kerja",when:"Sebelum program",items:[{id:"1-kk",key:"kkhema",note:ROUTES.hema}]});
+    return out;
   }
-  out.push({n:5,title:"Laporan selepas program",when:"Selepas program",after:true,items:[{id:"5-lbg",key:"lbg"},{id:"5-lkew",key:"lkew"},{id:"5-slsp",key:"slsp"}]});
+  out.push({n:1,title:"Kertas kerja",when:"Sebelum program",items:[{id:"1-kk",key:"kk",note:ROUTES.hep+". "+NOTE_RM0}]});
+  var s2=[{id:"2-skp",key:"skp"}];
+  if(a.outside)s2.push({id:"2-ska",key:"ska",note:"Program di luar UiTM. Hantar ke Bangunan Canselori bersama kertas kerja."});
+  out.push({n:2,title:"Surat kelulusan",when:"Sebelum program",items:s2});
+  var s3=[{id:"3-kk",key:"kk",note:"Muat naik di MyHEP. "+NOTE_RM0},{id:"3-skp",key:"skp"}];
+  if(a.outside)s3.push({id:"3-ska",key:"ska",note:"Program di luar UiTM"});
+  var l3=lewatItem("3-slkk","slkk",a);if(l3)s3.push(l3);
+  if(a.pindaan)s3.push({id:"3-spin",key:"spin",tag:"Pindaan"});
+  s3.push({id:"3-poster",key:"poster"});
+  out.push({n:3,title:"Hantar di MyHEP",when:"Sebelum program",link:true,items:s3});
+  if(a.transport){
+    var s4=[{id:"4-peserta",key:"peserta"},{id:"4-skprog",key:"skprog"}];
+    if(a.pindaan)s4.push({id:"4-spin",key:"spin",tag:"Pindaan"});
+    out.push({n:4,title:"Pengangkutan UiTM",when:"Sebelum program",items:s4});
+  }
+  var s5=[{id:"5-lbg",key:"lbg"},{id:"5-lkew",key:"lkew"}];
+  var l5=lewatItem("5-slsp","slsp",a);if(l5)s5.push(l5);
+  out.push({n:5,title:"Laporan selepas program",when:"Selepas program",after:true,items:s5});
   return out;
 }
 function allItems(a){var r=[];steps(a).forEach(function(s){r=r.concat(s.items)});return r}
@@ -219,26 +237,19 @@ function openPreview(key,from){
   m.hidden=false;document.body.style.overflow="hidden";document.getElementById("pv-close").focus();
 }
 function closePreview(){var m=document.getElementById("pv");if(!m||m.hidden)return;m.hidden=true;document.body.style.overflow="";if(lastFocus&&document.contains(lastFocus))lastFocus.focus()}
-function skipNote(a,s){
-  if(!isHep(a))return '<p class="skip">Langkah 2 hingga 4 tidak diperlukan kerana kertas kerja dihantar kepada HEMA.</p>';
-  if(!a.transport)return '<p class="skip">Langkah 4 (pengangkutan UiTM) tidak diperlukan.</p>';
-  return "";
-}
-function renderSteps(a,prog){
-  var html='<div class="steps">',list=steps(a),skipped=false;
-  list.forEach(function(s){
-    if(s.n===5&&!skipped){var k=skipNote(a);if(k){html+=k}skipped=true}
+function renderSteps(a){
+  var html='<div class="steps">';
+  steps(a).forEach(function(s){
+    if(s.n===5&&!a.transport)html+='<p class="skip">Langkah 4 (pengangkutan UiTM) tidak diperlukan.</p>';
     html+='<div class="step'+(s.after?" after":"")+'"><span class="num">'+s.n+'</span><div class="shead"><span class="when">'+s.when+'</span><h3>'+esc(s.title)+'</h3>'+
       (s.link?'<span class="muted" style="font-size:14px">Laman: <a href="https://myhep.uitm.edu.my" target="_blank" rel="noopener">myhep.uitm.edu.my</a></span>':"")+'</div><div class="docs">';
     s.items.forEach(function(it){
-      var done=prog&&prog.done&&prog.done[it.id];
-      html+='<div class="doc'+(done?" done":"")+'">'+
-        (prog?'<input type="checkbox" id="cb-'+esc(prog.id)+'-'+it.id+'" data-act="tick" data-p="'+esc(prog.id)+'" data-i="'+it.id+'"'+(done?" checked":"")+(canWrite?"":" disabled")+' aria-label="'+esc(DOCS[it.key])+'">':"")+
-        '<div class="dt"><span class="dn">'+esc(DOCS[it.key])+'</span>'+(it.note?'<span class="dnote">'+esc(it.note)+'</span>':"")+'</div>'+
-        (it.opt?'<span class="tag">Pindaan</span>':"")+tplBtn(it.key)+'</div>';
+      html+='<div class="doc"><div class="dt"><span class="dn">'+esc(DOCS[it.key])+'</span>'+(it.note?'<span class="dnote">'+esc(it.note)+'</span>':"")+'</div>'+
+        (it.tag?'<span class="tag">'+esc(it.tag)+'</span>':"")+tplBtn(it.key)+'</div>';
     });
     html+='</div></div>';
   });
+  if(!isHep(a))html+='<p class="skip" style="margin-bottom:0">Proses tamat di sini. Langkah 2 hingga 5 tidak diperlukan untuk kertas kerja yang dihantar kepada HEMA.</p>';
   return html+'</div>';
 }
 
@@ -248,135 +259,66 @@ function seg(name,opts,val){
 function questions(a){
   var h='<div class="qs"><div class="q"><label class="ql">Kertas kerja dihantar kepada?</label>'+seg("route",[["hema","HEMA"],["hep","HEP"]],a.route)+'</div>';
   if(isHep(a)){
-    h+='<div class="q"><label class="ql">Lokasi program?</label>'+seg("outside",[["false","Dalam UiTM"],["true","Luar UiTM"]],a.outside)+'</div>'+
+    h+='<div class="q"><label class="ql" for="q-date">Tarikh program</label><input type="date" id="q-date" value="'+esc(a.date||"")+'" style="max-width:220px"></div>'+
+       '<div class="q"><label class="ql">Lokasi program?</label>'+seg("outside",[["false","Dalam UiTM"],["true","Luar UiTM"]],a.outside)+'</div>'+
        '<div class="q"><label class="ql">Guna pengangkutan UiTM?</label>'+seg("transport",[["false","Tidak"],["true","Ya"]],a.transport)+'</div>'+
        '<div class="q"><label class="ql">Ada pindaan program?</label>'+seg("pindaan",[["false","Tiada"],["true","Ada"]],a.pindaan)+'</div>';
   }
   return h+'</div>';
 }
+function deadlineBox(a){
+  if(!isHep(a))return "";
+  var n=daysLeft(a);
+  if(n===null)return '<div class="banner"><span><b>Tempoh 30 hari:</b> semua surat mesti dihantar sekurang-kurangnya 30 hari sebelum program. Jika kurang, surat pernyataan sebab lewat perlu disediakan. Masukkan tarikh program untuk semak.</span></div>';
+  var d=new Date(a.date+"T00:00:00");d.setDate(d.getDate()-30);
+  if(n<0)return '<div class="banner"><span><b>Tarikh program sudah lepas.</b> Semak semula tarikh yang dimasukkan.</span></div>';
+  if(n<30)return '<div class="banner warn"><span><b>Lewat:</b> program dalam '+n+' hari, kurang daripada 30 hari. Surat pernyataan sebab lewat perlu disediakan (ditanda “Lewat” di bawah). Tarikh akhir hantar ialah '+esc(fmtDate(d))+'.</span></div>';
+  var left=n-30;
+  return '<div class="banner ok"><span><b>Masih dalam tempoh.</b> Hantar semua surat selewat-lewatnya '+esc(fmtDate(d))+' ('+(left===0?"hari ini":"lagi "+left+" hari")+'). Surat pernyataan sebab lewat tidak diperlukan.</span></div>';
+}
 
 function viewSemak(){
   var a=ui.answers,n=allItems(a).length;
-  var h='<section class="panel"><div><h2>Apa yang program awak perlukan?</h2><p class="muted" style="margin:4px 0 0">Jawab soalan di bawah. Senarai dokumen dikemas kini serta-merta.</p></div>'+questions(a)+'</section>';
-  h+='<section style="display:flex;flex-direction:column;gap:16px"><div class="row" style="justify-content:space-between"><h2>'+n+' dokumen diperlukan</h2>'+
-     (canWrite?'<button class="btn" data-act="newOpen">Simpan sebagai program</button>':"")+'</div>';
-  if(ui.newOpen&&canWrite)h+=newForm();
-  h+=renderSteps(a,null)+'</section>';
+  var h='<section class="panel"><div><h2>Apa yang program awak perlukan?</h2><p class="muted" style="margin:4px 0 0">Jawab soalan di bawah. Senarai dokumen dikemas kini serta-merta.</p></div>'+questions(a)+deadlineBox(a)+'</section>';
+  h+='<section style="display:flex;flex-direction:column;gap:16px"><h2>'+n+' dokumen diperlukan</h2>'+renderSteps(a)+'</section>';
   return h;
-}
-function newForm(){
-  return '<div class="panel"><h3>Program baharu</h3><p class="muted" style="margin:0;font-size:14px">Jawapan di atas akan digunakan untuk senarai semak program ini.</p><div class="row">'+
-    '<div class="field"><label for="np-name">Nama program</label><input type="text" id="np-name" placeholder="Contoh: Harmoni Care 2.0"></div>'+
-    '<div class="field" style="flex:0 1 200px"><label for="np-date">Tarikh program</label><input type="date" id="np-date"></div></div>'+
-    '<div class="row"><button class="btn" data-act="create">Cipta program</button><button class="btn ghost" data-act="newClose">Batal</button></div></div>';
-}
-
-function fmtDate(d){if(!d)return "Tarikh belum ditetapkan";try{return new Date(d+"T00:00:00").toLocaleDateString("ms-MY",{day:"numeric",month:"long",year:"numeric"})}catch(e){return d}}
-function viewProgram(){
-  var h='<div class="row" style="justify-content:space-between"><div><h2>Program berjalan</h2><p class="muted" style="margin:4px 0 0">Tandakan dokumen yang sudah siap. Senarai ini peribadi: disimpan dalam pelayar dan peranti awak sahaja.</p></div>'+
-    '<a class="btn" href="#semak" style="text-decoration:none">Tambah program</a></div>';
-  if(!state.programs.length){
-    return h+'<div class="empty"><h3 style="color:var(--ink)">Belum ada program</h3><p style="margin:0;max-width:44ch">Pergi ke tab <b>Semak keperluan</b>, jawab soalan tentang program, kemudian tekan <b>Simpan sebagai program</b>.</p></div>';
-  }
-  var list=state.programs.slice().sort(function(x,y){return (x.date||"9999")<(y.date||"9999")?-1:1});
-  h+='<div class="cards">';
-  list.forEach(function(p){
-    var items=allItems(p.answers),done=items.filter(function(i){return p.done&&p.done[i.id]}).length,pct=Math.round(done/items.length*100),open=ui.open===p.id;
-    h+='<article class="card'+(open?" open":"")+'"><button class="chead" data-act="toggle" data-p="'+esc(p.id)+'" aria-expanded="'+open+'">'+
-      '<div class="ct"><h3>'+esc(p.name)+'</h3><span class="pill">'+esc(fmtDate(p.date))+' · '+esc(ROUTES[p.answers.route])+(p.answers.outside?" · Luar UiTM":"")+(p.answers.transport?" · Pengangkutan UiTM":"")+'</span>'+
-      '<div class="bar" aria-hidden="true"><i style="width:'+pct+'%"></i></div></div>'+
-      '<span class="count'+(done===items.length?" full":"")+'">'+done+'/'+items.length+'</span><span class="chev" aria-hidden="true">›</span></button>';
-    if(open){
-      h+='<div class="cbody">'+renderSteps(p.answers,p);
-      if(canWrite){
-        h+=ui.confirmDel===p.id?
-          '<div class="row banner" style="justify-content:space-between"><span>Padam program “'+esc(p.name)+'” dan senarai semaknya?</span><span class="row"><button class="btn danger" data-act="del" data-p="'+esc(p.id)+'">Padam</button><button class="btn ghost" data-act="delCancel">Batal</button></span></div>':
-          '<div class="row"><button class="btn ghost" data-act="delAsk" data-p="'+esc(p.id)+'">Padam program</button></div>';
-      }
-      h+='</div>';
-    }
-    h+='</article>';
-  });
-  return h+'</div>';
 }
 
 function viewTemplat(){
   var keys=Object.keys(DOCS),missing=keys.filter(function(k){return !FILES[k]});
-  var h='<div><h2>Templat dan contoh surat</h2><p class="muted" style="margin:4px 0 0">Muat turun templat Word, kemudian gantikan bahagian bertanda [....] dengan maklumat program.</p></div>';
+  var h='<div><h2>Templat dan contoh surat</h2><p class="muted" style="margin:4px 0 0">Lihat templat dahulu, kemudian muat turun. Gantikan bahagian bertanda [....] dengan maklumat program.</p></div>';
   h+='<div class="tlist">'+keys.filter(function(k){return FILES[k]}).map(function(k){return '<div class="trow"><span class="dn">'+esc(DOCS[k])+'</span>'+tplBtn(k)+'</div>'}).join("")+'</div>';
-  h+='<div class="panel"><h3>Contoh poster</h3><img src="templates/contoh-poster.jpg" alt="Contoh poster program Harmoni: Healing Sat di Surau Perindu, setiap minggu selepas solat Jumaat" style="max-width:320px;width:100%;border-radius:10px;border:1px solid var(--line)"></div>';
   h+='<div><h2>Belum ada templat</h2><p class="muted" style="margin:4px 0 0">Dokumen ini tiada templat lagi. Rujuk Setiausaha.</p></div>';
-  keys=missing;
-  if(false){
-    h+='<div class="tlist">'+keys.map(function(k){return '<div class="trow"><label class="dn" for="tp-'+k+'">'+esc(DOCS[k])+'</label><input type="url" id="tp-'+k+'" data-k="'+k+'" placeholder="https://drive.google.com/…" value="'+esc(state.templates[k]||"")+'"></div>'}).join("")+'</div>'+
-      '<p class="muted" style="margin:0;font-size:13px">Pastikan fail Drive dikongsi kepada AJK ("Sesiapa yang ada pautan" atau e-mel AJK). Biarkan kosong jika tiada templat.</p>'+
-      '<div class="row"><button class="btn" data-act="saveTpl">Simpan pautan</button><button class="btn ghost" data-act="cancelTpl">Batal</button></div>';
-  }else{
-    h+='<div class="tlist">'+keys.map(function(k){return '<div class="trow"><span class="dn">'+esc(DOCS[k])+'</span>'+tplBtn(k)+'</div>'}).join("")+'</div>';
-  }
+  h+='<div class="tlist">'+missing.map(function(k){return '<div class="trow"><span class="dn">'+esc(DOCS[k])+'</span>'+tplBtn(k)+'</div>'}).join("")+'</div>';
   return h;
 }
 
-function route(){var r=(location.hash||"").replace("#","");return ["semak","program","templat"].indexOf(r)>=0?r:"semak"}
+function route(){var r=(location.hash||"").replace("#","");return r==="templat"?"templat":"semak"}
 function render(){
   var r=route(),app=document.getElementById("app"),y=window.scrollY;
-  var tabs=[["semak","Semak keperluan"],["program","Program ("+state.programs.length+")"],["templat","Templat"]];
+  var tabs=[["semak","Semak keperluan"],["templat","Templat"]];
   var h='<header class="top"><div class="wrap"><span class="eyebrow">Persatuan Mahasiswa Harmoni UiTM Shah Alam</span><h1>Panduan Program</h1>'+
     '<p class="lede">Surat dan dokumen untuk menghantar program, dari kertas kerja hingga laporan selepas program.</p>'+
     '<nav class="tabs">'+tabs.map(function(t){return '<a href="#'+t[0]+'"'+(r===t[0]?' aria-current="page"':"")+'>'+t[1]+'</a>'}).join("")+'</nav></div></header><main><div class="wrap">';
-  if(statusMsg)h+='<p class="status" role="status">'+esc(statusMsg)+'</p>';
-  h+=r==="program"?viewProgram():r==="templat"?viewTemplat():viewSemak();
+  h+=r==="templat"?viewTemplat():viewSemak();
   h+='</div></main>';
-  var keep={};["np-name","np-date"].forEach(function(id){var el=document.getElementById(id);if(el)keep[id]=el.value});
   app.innerHTML=h;
-  Object.keys(keep).forEach(function(id){var el=document.getElementById(id);if(el)el.value=keep[id]});
   window.scrollTo(0,y);
-}
-
-function save(){
-  var ok=true;
-  try{localStorage.setItem("hp-state",JSON.stringify({v:1,programs:state.programs}))}catch(e){ok=false}
-  statusMsg=ok?"":"Pelayar ini tidak membenarkan simpanan, jadi senarai semak akan hilang bila halaman ditutup.";
-  render();
 }
 
 document.addEventListener("click",function(ev){
   var t=ev.target.closest("[data-act]");if(!t)return;var act=t.getAttribute("data-act");
-  if(act==="tick")return;
   if(act==="pv"){openPreview(t.getAttribute("data-k"),t);return}
   if(act==="pvclose"){closePreview();return}
   if(act==="ans"){var k=t.getAttribute("data-k"),v=t.getAttribute("data-v");ui.answers[k]=k==="route"?v:v==="true";lsSet("hp-answers",ui.answers);render()}
-  else if(act==="newOpen"){ui.newOpen=true;render();var n=document.getElementById("np-name");if(n)n.focus()}
-  else if(act==="newClose"){ui.newOpen=false;render()}
-  else if(act==="create"){
-    var name=(document.getElementById("np-name").value||"").trim(),date=document.getElementById("np-date").value||"";
-    if(!name){statusMsg="Masukkan nama program dahulu.";render();document.getElementById("np-name").focus();return}
-    var id="p"+Date.now().toString(36);
-    state.programs.push({id:id,name:name.slice(0,120),date:date,answers:JSON.parse(JSON.stringify(ui.answers)),done:{}});
-    ui.newOpen=false;ui.open=id;lsSet("hp-open",id);location.hash="program";save();
-  }
-  else if(act==="toggle"){var p=t.getAttribute("data-p");ui.open=ui.open===p?null:p;ui.confirmDel=null;lsSet("hp-open",ui.open);render()}
-  else if(act==="delAsk"){ui.confirmDel=t.getAttribute("data-p");render()}
-  else if(act==="delCancel"){ui.confirmDel=null;render()}
-  else if(act==="del"){var d=t.getAttribute("data-p");state.programs=state.programs.filter(function(p){return p.id!==d});ui.confirmDel=null;save()}
-  else if(act==="editTpl"){ui.editTpl=true;render()}
-  else if(act==="cancelTpl"){ui.editTpl=false;render()}
-  else if(act==="saveTpl"){
-    var bad=false,next={};
-    document.querySelectorAll("input[data-k]").forEach(function(i){var v=i.value.trim();if(!v)return;if(!/^https:\/\//i.test(v)){bad=true;return}next[i.getAttribute("data-k")]=v});
-    if(bad){statusMsg="Setiap pautan mesti bermula dengan https://";render();return}
-    state.templates=next;ui.editTpl=false;save();
-  }
 });
 document.addEventListener("change",function(ev){
-  var t=ev.target;if(t.getAttribute("data-act")!=="tick")return;
-  if(!canWrite){t.checked=!t.checked;return}
-  var p=state.programs.find(function(x){return x.id===t.getAttribute("data-p")});if(!p)return;
-  p.done=p.done||{};var i=t.getAttribute("data-i");if(t.checked)p.done[i]=true;else delete p.done[i];
-  save();
+  if(ev.target.id!=="q-date")return;
+  ui.answers.date=ev.target.value||"";lsSet("hp-answers",ui.answers);render();
+  var el=document.getElementById("q-date");if(el)el.focus();
 });
 document.addEventListener("keydown",function(e){if(e.key==="Escape")closePreview()});
-window.addEventListener("hashchange",function(){statusMsg="";render()});
+window.addEventListener("hashchange",function(){render()});
 render();
 
 })();
