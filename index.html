@@ -151,7 +151,8 @@ var DOCS={
   peserta:"Senarai peserta program",skprog:"Surat kelulusan program (dari HEP)",
   lbg:"Laporan bergambar program",lkew:"Laporan implikasi kewangan program",slsp:"Surat pernyataan sebab lewat surat-surat program"
 };
-var ROUTES={hema:"Hantar kepada HEMA","hep-k":"HEP, melibatkan kewangan","hep-t":"HEP, tidak melibatkan kewangan"};
+var ROUTES={hema:"Hantar kepada HEMA",hep:"Hantar kepada HEP","hep-k":"Hantar kepada HEP","hep-t":"Hantar kepada HEP"};
+var NOTE_RM0="Program tiada kewangan? Tulis RM0.00 di bahagian Implikasi Kewangan.";
 var FILES={
   kk:{f:"kertas-kerja.docx",n:"SAMPLE KERTAS KERJA PROGRAM [NAMA].docx",pv:"kertas-kerja",pg:7},
   kkhema:{f:"contoh-kertas-kerja-hema.pdf",n:"Contoh Kertas Kerja HEMA - Harmoni Vibe.pdf",pv:"contoh-kertas-kerja-hema",pg:8},
@@ -167,7 +168,8 @@ var FILES={
 
 function lsGet(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
 function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
-var ui={answers:lsGet("hp-answers",{route:"hep-k",outside:false,transport:false,pindaan:false}),open:lsGet("hp-open",null),confirmDel:null,editTpl:false,newOpen:false};
+var ui={answers:lsGet("hp-answers",{route:"hep",outside:false,transport:false,pindaan:false}),open:lsGet("hp-open",null),confirmDel:null,editTpl:false,newOpen:false};
+if(ui.answers.route!=="hema")ui.answers.route="hep";
 var state=lsGet("hp-state",null)||{v:1,programs:[]};state.programs=state.programs||[];state.templates={};
 var canWrite=true,statusMsg="";
 
@@ -176,12 +178,14 @@ function isHep(a){return a.route!=="hema"}
 
 function steps(a){
   var out=[];
-  out.push({n:1,title:"Kertas kerja",when:"Sebelum program",items:[{id:"1-kk",key:isHep(a)?"kk":"kkhema",note:ROUTES[a.route]}]});
+  out.push({n:1,title:"Kertas kerja",when:"Sebelum program",items:[{id:"1-kk",key:isHep(a)?"kk":"kkhema",note:isHep(a)?ROUTES.hep+". "+NOTE_RM0:ROUTES.hema}]});
   if(isHep(a)){
     var s2=[{id:"2-skp",key:"skp"}];
     if(a.outside)s2.push({id:"2-ska",key:"ska",note:"Program di luar UiTM. Hantar ke Bangunan Canselori bersama kertas kerja."});
     out.push({n:2,title:"Surat kelulusan",when:"Sebelum program",items:s2});
-    var s3=[{id:"3-kk",key:"kk",note:"Muat naik di MyHEP"},{id:"3-skp",key:"skp"},{id:"3-slkk",key:"slkk"}];
+    var s3=[{id:"3-kk",key:"kk",note:"Muat naik di MyHEP. "+NOTE_RM0},{id:"3-skp",key:"skp"}];
+    if(a.outside)s3.push({id:"3-ska",key:"ska",note:"Program di luar UiTM"});
+    s3.push({id:"3-slkk",key:"slkk"});
     if(a.pindaan)s3.push({id:"3-spin",key:"spin",opt:true});
     s3.push({id:"3-poster",key:"poster"});
     out.push({n:3,title:"Hantar di MyHEP",when:"Sebelum program",link:true,items:s3});
@@ -242,7 +246,7 @@ function seg(name,opts,val){
   return '<div class="seg" role="group">'+opts.map(function(o){return '<button type="button" data-act="ans" data-k="'+name+'" data-v="'+o[0]+'" aria-pressed="'+(String(val)===o[0])+'">'+esc(o[1])+'</button>'}).join("")+'</div>';
 }
 function questions(a){
-  var h='<div class="qs"><div class="q"><label class="ql">Kertas kerja dihantar kepada?</label>'+seg("route",[["hema","HEMA"],["hep-k","HEP (ada kewangan)"],["hep-t","HEP (tiada kewangan)"]],a.route)+'</div>';
+  var h='<div class="qs"><div class="q"><label class="ql">Kertas kerja dihantar kepada?</label>'+seg("route",[["hema","HEMA"],["hep","HEP"]],a.route)+'</div>';
   if(isHep(a)){
     h+='<div class="q"><label class="ql">Lokasi program?</label>'+seg("outside",[["false","Dalam UiTM"],["true","Luar UiTM"]],a.outside)+'</div>'+
        '<div class="q"><label class="ql">Guna pengangkutan UiTM?</label>'+seg("transport",[["false","Tidak"],["true","Ya"]],a.transport)+'</div>'+
