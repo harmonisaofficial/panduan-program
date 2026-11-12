@@ -154,6 +154,8 @@ var DOCS={
   lbg:"Laporan bergambar program",lkew:"Laporan implikasi kewangan program",slsp:"Surat pernyataan sebab lewat surat-surat program"
 };
 var ROUTES={hema:"Hantar kepada HEMA",hep:"Hantar kepada HEP","hep-k":"Hantar kepada HEP","hep-t":"Hantar kepada HEP"};
+var KEYNOTE={peserta:"Mesti dicop oleh penasihat program.",skprog:"Dikeluarkan oleh HEP. Tunggu kelulusan sebelum meneruskan.",spin:"Dikeluarkan oleh HEP. Tunggu kelulusan pindaan sebelum meneruskan."};
+var FROM_HEP={skprog:1,spin:1};
 var NOTE_RM0="Program tiada kewangan? Tulis RM0.00 di bahagian Implikasi Kewangan.";
 var FILES={
   kk:{f:"kertas-kerja.docx",n:"SAMPLE KERTAS KERJA PROGRAM [NAMA].docx",pv:"kertas-kerja",pg:7},
@@ -164,6 +166,7 @@ var FILES={
   poster:{f:"contoh-poster.jpg",n:"Contoh Poster Harmoni.jpg",label:"Contoh",img:"templates/contoh-poster.jpg"},
   lbg:{f:"laporan-bergambar.docx",n:"SAMPLE LAPORAN BERGAMBAR PROGRAM [NAMA].docx",pv:"laporan-bergambar",pg:3},
   lkew:{f:"laporan-implikasi-kewangan.docx",n:"SAMPLE LAPORAN IMPLIKASI KEWANGAN PROGRAM [NAMA].docx",pv:"laporan-implikasi-kewangan",pg:1},
+  peserta:{f:"senarai-peserta.docx",n:"SAMPLE SENARAI KEHADIRAN PELAJAR PROGRAM [NAMA].docx",pv:"senarai-peserta",pg:2},
   slsp:{f:"surat-lewat-surat-program.docx",n:"SAMPLE SURAT PERNYATAAN SEBAB KELEWATAN SURAT-SURAT PROGRAM [NAMA].docx",pv:"surat-lewat-surat-program",pg:2}
 };
 
@@ -220,6 +223,7 @@ function allItems(a){var r=[];steps(a).forEach(function(s){r=r.concat(s.items)})
 
 function tplBtn(key){
   var f=FILES[key];
+  if(FROM_HEP[key])return '<span class="tpl none">Dari HEP</span>';
   if(f)return '<button type="button" class="tpl" data-act="pv" data-k="'+key+'">'+(f.label?"Lihat contoh":"Lihat templat")+'</button>';
   return '<span class="tpl none">Tiada templat</span>';
 }
@@ -244,7 +248,7 @@ function renderSteps(a){
     html+='<div class="step'+(s.after?" after":"")+'"><span class="num">'+s.n+'</span><div class="shead"><span class="when">'+s.when+'</span><h3>'+esc(s.title)+'</h3>'+
       (s.link?'<span class="muted" style="font-size:14px">Laman: <a href="https://myhep.uitm.edu.my" target="_blank" rel="noopener">myhep.uitm.edu.my</a></span>':"")+'</div><div class="docs">';
     s.items.forEach(function(it){
-      html+='<div class="doc"><div class="dt"><span class="dn">'+esc(DOCS[it.key])+'</span>'+(it.note?'<span class="dnote">'+esc(it.note)+'</span>':"")+'</div>'+
+      html+='<div class="doc"><div class="dt"><span class="dn">'+esc(DOCS[it.key])+'</span>'+((it.note||KEYNOTE[it.key])?'<span class="dnote">'+esc([it.note,KEYNOTE[it.key]].filter(Boolean).join(" "))+'</span>':"")+'</div>'+
         (it.tag?'<span class="tag">'+esc(it.tag)+'</span>':"")+tplBtn(it.key)+'</div>';
     });
     html+='</div></div>';
@@ -288,8 +292,13 @@ function viewTemplat(){
   var keys=Object.keys(DOCS),missing=keys.filter(function(k){return !FILES[k]});
   var h='<div><h2>Templat dan contoh surat</h2><p class="muted" style="margin:4px 0 0">Lihat templat dahulu, kemudian muat turun. Gantikan bahagian bertanda [....] dengan maklumat program.</p></div>';
   h+='<div class="tlist">'+keys.filter(function(k){return FILES[k]}).map(function(k){return '<div class="trow"><span class="dn">'+esc(DOCS[k])+'</span>'+tplBtn(k)+'</div>'}).join("")+'</div>';
+  var hep=missing.filter(function(k){return FROM_HEP[k]});missing=missing.filter(function(k){return !FROM_HEP[k]});
+  function row(k){return '<div class="trow"><div class="dn" style="display:flex;flex-direction:column;gap:2px"><span>'+esc(DOCS[k])+'</span>'+(KEYNOTE[k]?'<span class="muted" style="font-size:13px;font-weight:400">'+esc(KEYNOTE[k])+'</span>':"")+'</div>'+tplBtn(k)+'</div>'}
+  h+='<div><h2>Dikeluarkan oleh HEP</h2><p class="muted" style="margin:4px 0 0">Surat ini tiada templat. Tunggu HEP mengeluarkannya selepas permohonan diluluskan.</p></div>';
+  h+='<div class="tlist">'+hep.map(row).join("")+'</div>';
   h+='<div><h2>Belum ada templat</h2><p class="muted" style="margin:4px 0 0">Dokumen ini tiada templat lagi. Rujuk Setiausaha.</p></div>';
-  h+='<div class="tlist">'+missing.map(function(k){return '<div class="trow"><span class="dn">'+esc(DOCS[k])+'</span>'+tplBtn(k)+'</div>'}).join("")+'</div>';
+  h+='<div class="tlist">'+missing.map(row).join("")+'</div>';
+  if(false)h+='<div class="tlist">'+missing.map(function(k){return '<div class="trow"><span class="dn">'+esc(DOCS[k])+'</span>'+tplBtn(k)+'</div>'}).join("")+'</div>';
   return h;
 }
 
