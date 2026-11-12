@@ -186,6 +186,7 @@ function daysLeft(a){
   var t=new Date();t.setHours(0,0,0,0);
   return Math.round((d-t)/86400000);
 }
+function reportDue(a){if(!a.date)return "";var d=new Date(a.date+"T00:00:00");if(isNaN(d))return "";d.setDate(d.getDate()+14);return " (selewat-lewatnya "+fmtDate(d)+")"}
 function lateState(a){var n=daysLeft(a);return n===null?null:n<30}
 function fmtDate(d){try{return d.toLocaleDateString("ms-MY",{day:"numeric",month:"long",year:"numeric"})}catch(e){return ""}}
 function lewatItem(id,key,a){
@@ -215,8 +216,10 @@ function steps(a){
     out.push({n:4,title:"Pengangkutan UiTM",when:"Sebelum program",items:s4});
   }
   var s5=[{id:"5-lbg",key:"lbg"},{id:"5-lkew",key:"lkew"}];
-  var l5=lewatItem("5-slsp","slsp",a);if(l5)s5.push(l5);
-  out.push({n:5,title:"Laporan selepas program",when:"Selepas program",after:true,items:s5});
+  var n=daysLeft(a);
+  if(n===null||n>-14)s5.push({id:"5-slsp",key:"slsp",tag:"Jika lewat",note:"Hanya jika laporan dihantar lebih 2 minggu selepas program."});
+  else s5.push({id:"5-slsp",key:"slsp",tag:"Lewat",note:"Diperlukan kerana sudah lebih 2 minggu selepas program."});
+  out.push({n:5,title:"Laporan selepas program",when:"Selepas program",after:true,link:"ereport",items:s5});
   return out;
 }
 function allItems(a){var r=[];steps(a).forEach(function(s){r=r.concat(s.items)});return r}
@@ -248,7 +251,7 @@ function renderSteps(a){
   steps(a).forEach(function(s){
     if(s.n===5&&!a.transport)html+='<p class="skip">Langkah 4 (pengangkutan UiTM) tidak diperlukan.</p>';
     html+='<div class="step'+(s.after?" after":"")+'"><span class="num">'+s.n+'</span><div class="shead"><span class="when">'+s.when+'</span><h3>'+esc(s.title)+'</h3>'+
-      (s.link?'<span class="muted" style="font-size:14px">Laman: <a href="https://myhep.uitm.edu.my" target="_blank" rel="noopener">myhep.uitm.edu.my</a></span>':"")+'</div><div class="docs">';
+      (s.link==="ereport"?'<span class="muted" style="font-size:14px">Hantar semua di: <a href="https://www.cognitoforms.com/PusatKegiatanPelajarUiTM/SistemEReportPKP2" target="_blank" rel="noopener">Sistem e-Report PKP</a> · Tempoh: maksimum 2 minggu selepas program'+reportDue(a)+'</span>':s.link?'<span class="muted" style="font-size:14px">Laman: <a href="https://myhep.uitm.edu.my" target="_blank" rel="noopener">myhep.uitm.edu.my</a></span>':"")+'</div><div class="docs">';
     s.items.forEach(function(it){
       html+='<div class="doc"><div class="dt"><span class="dn">'+esc(DOCS[it.key])+'</span>'+((it.note||KEYNOTE[it.key])?'<span class="dnote">'+esc([it.note,KEYNOTE[it.key]].filter(Boolean).join(" "))+'</span>':"")+'</div>'+
         (it.tag?'<span class="tag">'+esc(it.tag)+'</span>':"")+tplBtn(it.key)+'</div>';
@@ -277,7 +280,9 @@ function deadlineBox(a){
   var n=daysLeft(a);
   if(n===null)return '<div class="banner"><span><b>Tempoh 30 hari:</b> semua surat mesti dihantar sekurang-kurangnya 30 hari sebelum program. Jika kurang, surat pernyataan sebab lewat perlu disediakan. Masukkan tarikh program untuk semak.</span></div>';
   var d=new Date(a.date+"T00:00:00");d.setDate(d.getDate()-30);
-  if(n<0)return '<div class="banner"><span><b>Tarikh program sudah lepas.</b> Semak semula tarikh yang dimasukkan.</span></div>';
+  if(n<0){var r=new Date(a.date+"T00:00:00");r.setDate(r.getDate()+14);
+    if(n>=-14)return '<div class="banner ok"><span><b>Program sudah berlangsung.</b> Hantar laporan di Sistem e-Report PKP selewat-lewatnya '+esc(fmtDate(r))+' ('+(n===-14?"hari ini":"lagi "+(14+n)+" hari")+').</span></div>';
+    return '<div class="banner warn"><span><b>Laporan lewat:</b> sudah lebih 2 minggu selepas program (tarikh akhir '+esc(fmtDate(r))+'). Sertakan surat pernyataan sebab lewat surat-surat program.</span></div>';}
   if(n<30)return '<div class="banner warn"><span><b>Lewat:</b> program dalam '+n+' hari, kurang daripada 30 hari. Surat pernyataan sebab lewat perlu disediakan (ditanda “Lewat” di bawah). Tarikh akhir hantar ialah '+esc(fmtDate(d))+'.</span></div>';
   var left=n-30;
   return '<div class="banner ok"><span><b>Masih dalam tempoh.</b> Hantar semua surat selewat-lewatnya '+esc(fmtDate(d))+' ('+(left===0?"hari ini":"lagi "+left+" hari")+'). Surat pernyataan sebab lewat tidak diperlukan.</span></div>';
