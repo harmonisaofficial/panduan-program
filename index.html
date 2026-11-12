@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Panduan surat dan dokumen untuk menghantar program Persatuan Mahasiswa Harmoni UiTM Shah Alam.">
+<title>Panduan Program Harmoni</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap">
+<style id="page-style">
+body{margin:0}img{max-width:100%}[hidden]{display:none!important}
+
+/* Layout: teal header band with tabs, then one centred working column (max 920px) of steps, cards and checklists. */
+:root{
+  --bg:#F1F4F2;--surface:#FCFCFA;--ink:#14302E;--muted:#52625F;--line:#D3DCD9;
+  --brand:#123C3A;--brand-ink:#F4F2EC;--brand-muted:#B9D3CF;
+  --accent:#9A5B0C;--accent-soft:#FBEBCB;--ok:#2B7149;--ok-soft:#DCEFE3;--danger:#A3322A;
+  --display:'Poppins',Arial,sans-serif;--text:'Inter',Arial,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0D1716;--surface:#15211F;--ink:#E5EEEB;--muted:#9BAFAA;--line:#293A37;
+  --brand:#173F3C;--brand-ink:#F4F2EC;--brand-muted:#A9C7C2;
+  --accent:#EBAA4C;--accent-soft:#3A2B12;--ok:#6CC490;--ok-soft:#16352A;--danger:#F08A80;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0D1716;--surface:#15211F;--ink:#E5EEEB;--muted:#9BAFAA;--line:#293A37;
+  --brand:#173F3C;--brand-ink:#F4F2EC;--brand-muted:#A9C7C2;
+  --accent:#EBAA4C;--accent-soft:#3A2B12;--ok:#6CC490;--ok-soft:#16352A;--danger:#F08A80;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--text);font-size:15px;line-height:1.55}
+.wrap{max-width:920px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.top{background:var(--brand);color:var(--brand-ink)}
+header.top .wrap{padding-block:28px 0;display:flex;flex-direction:column;gap:6px}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-soft)}
+:root[data-theme="dark"] .eyebrow{color:var(--accent)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(26px,4.4vw,36px);line-height:1.15;margin:0;text-wrap:balance}
+.lede{color:var(--brand-muted);margin:0;max-width:62ch}
+nav.tabs{display:flex;gap:4px;margin-top:20px;overflow-x:auto}
+nav.tabs a{color:var(--brand-muted);text-decoration:none;font-weight:600;padding:10px 16px;border-radius:10px 10px 0 0;white-space:nowrap}
+nav.tabs a[aria-current="page"]{background:var(--bg);color:var(--ink)}
+nav.tabs a:focus-visible,button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+main .wrap{padding-block:28px 64px;display:flex;flex-direction:column;gap:24px}
+h2{font-family:var(--display);font-size:22px;font-weight:600;margin:0;text-wrap:balance}
+h3{font-family:var(--display);font-size:17px;font-weight:600;margin:0}
+.muted{color:var(--muted)}
+.banner{display:flex;gap:10px;align-items:flex-start;background:var(--accent-soft);color:var(--ink);border-radius:12px;padding:12px 16px;font-size:14px}
+.status{font-size:13px;color:var(--muted);min-height:20px}
+/* Questions */
+.qs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.q{display:flex;flex-direction:column;gap:8px;min-width:0}
+.q label.ql{font-weight:600;font-size:14px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:7px 14px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
+:root[data-theme="dark"] .seg button[aria-pressed="true"]{border-color:var(--brand-muted)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .seg button[aria-pressed="true"]{border-color:var(--brand-muted)}}
+/* Steps */
+.steps{display:flex;flex-direction:column;gap:0;border-left:2px solid var(--line);margin-left:15px}
+.step{position:relative;padding:0 0 26px 30px}
+.step:last-child{padding-bottom:4px}
+.step .num{position:absolute;left:-16px;top:0;width:30px;height:30px;border-radius:50%;background:var(--brand);color:var(--brand-ink);font-family:var(--display);font-weight:600;display:grid;place-items:center;font-size:14px}
+.step.after .num{background:var(--accent);color:var(--surface)}
+.step .when{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.step .shead{display:flex;flex-direction:column;gap:2px;margin-bottom:10px;padding-top:3px}
+.docs{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:12px;background:var(--surface);overflow:hidden}
+.doc{display:flex;gap:12px;align-items:center;padding:12px 14px;border-top:1px solid var(--line)}
+.doc:first-child{border-top:none}
+.doc .dt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.doc .dn{font-weight:500}
+.doc .dnote{font-size:13px;color:var(--muted)}
+.doc.done .dn{color:var(--muted);text-decoration:line-through}
+.tag{font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;background:var(--accent-soft);color:var(--ink);border-radius:999px;padding:2px 8px;white-space:nowrap}
+.tpl{font-size:13px;font-weight:600;white-space:nowrap;text-decoration:none;color:var(--brand);border:1px solid var(--line);border-radius:8px;padding:6px 10px;background:var(--bg)}
+:root[data-theme="dark"] .tpl{color:var(--brand-muted)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tpl{color:var(--brand-muted)}}
+button.tpl{font-family:inherit;cursor:pointer}
+button.tpl:disabled{opacity:.6;cursor:wait}
+.tpl.none{color:var(--muted);font-weight:500;border-style:dashed;background:transparent}
+.skip{font-size:14px;color:var(--muted);border:1px dashed var(--line);border-radius:12px;padding:12px 16px;margin:0 0 26px 30px}
+input[type=checkbox]{width:20px;height:20px;accent-color:var(--ok);flex:none;margin:0;cursor:pointer}
+input[type=checkbox]:disabled{cursor:not-allowed}
+/* Buttons & forms */
+.btn{font:inherit;font-weight:600;font-size:14px;border-radius:10px;padding:9px 16px;cursor:pointer;border:1px solid var(--brand);background:var(--brand);color:var(--brand-ink)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn.danger{background:var(--danger);border-color:var(--danger);color:var(--surface)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:14px}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0;flex:1 1 220px}
+.field label{font-size:13px;font-weight:600}
+input[type=text],input[type=date],input[type=url]{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%;min-width:0}
+/* Program cards */
+.cards{display:flex;flex-direction:column;gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.card .chead{display:flex;gap:14px;align-items:center;padding:16px 18px;cursor:pointer;width:100%;background:none;border:none;font:inherit;color:inherit;text-align:left}
+.card .ct{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.pill{font-size:12px;font-weight:600;color:var(--muted)}
+.bar{height:8px;background:var(--bg);border-radius:99px;overflow:hidden;border:1px solid var(--line)}
+.bar i{display:block;height:100%;background:var(--ok);border-radius:99px}
+.count{font-family:var(--display);font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.count.full{color:var(--ok)}
+.cbody{border-top:1px solid var(--line);padding:18px;display:flex;flex-direction:column;gap:16px;background:var(--bg)}
+.chev{transition:transform .2s;color:var(--muted)}
+.card.open .chev{transform:rotate(90deg)}
+.empty{text-align:center;padding:36px 18px;border:1px dashed var(--line);border-radius:14px;color:var(--muted);display:flex;flex-direction:column;gap:8px;align-items:center}
+.tlist{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:12px;background:var(--surface);overflow:hidden}
+.trow{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding:12px 14px;border-top:1px solid var(--line)}
+.trow:first-child{border-top:none}
+.trow .dn{flex:1 1 200px;min-width:0;font-weight:500}
+.trow input{flex:1 1 280px}
+a{color:var(--brand)}
+:root[data-theme="dark"] a{color:var(--brand-muted)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) a{color:var(--brand-muted)}}
+@media (prefers-reduced-motion:reduce){.chev{transition:none}}
+@media (max-width:520px){.doc{flex-wrap:wrap}.doc .dt{flex-basis:calc(100% - 40px)}.doc .tpl{margin-left:32px}}
+
+/* Preview modal */
+.pv{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.pv-backdrop{position:absolute;inset:0;background:rgba(8,20,19,.62)}
+.pv-box{position:relative;background:var(--surface);color:var(--ink);border-radius:16px;width:min(860px,100%);max-height:100%;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.pv-head{display:flex;gap:12px;align-items:flex-start;padding:16px 18px;border-bottom:1px solid var(--line)}
+.pv-ht{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.pv-ht h2{font-size:19px}
+.pv-ht span{font-size:13px}
+.pv-x{font:inherit;font-size:16px;background:transparent;border:1px solid var(--line);color:var(--ink);border-radius:8px;width:36px;height:36px;cursor:pointer;flex:none}
+.pv-body{overflow-y:auto;background:var(--bg);padding:18px}
+#pv-pages{display:flex;flex-direction:column;gap:18px;align-items:center}
+#pv-pages figure{margin:0;display:flex;flex-direction:column;gap:6px;align-items:center;width:100%}
+#pv-pages img{width:100%;max-width:720px;height:auto;background:#fff;border:1px solid var(--line);border-radius:4px;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+#pv-pages figcaption{font-size:12px;color:var(--muted)}
+.pv-foot{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;padding:14px 18px;border-top:1px solid var(--line)}
+.pv-note{font-size:12px;flex:1 1 220px}
+a.btn{text-decoration:none;display:inline-block}
+@media (max-width:520px){.pv{padding:0}.pv-box{border-radius:0;height:100%}.pv-body{padding:10px}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="pv" class="pv" hidden role="dialog" aria-modal="true" aria-labelledby="pv-title">
+<div class="pv-backdrop" data-act="pvclose"></div>
+<div class="pv-box">
+<div class="pv-head"><div class="pv-ht"><h2 id="pv-title">Templat</h2><span id="pv-meta" class="muted"></span></div><button type="button" class="pv-x" id="pv-close" data-act="pvclose" aria-label="Tutup">✕</button></div>
+<div class="pv-body" id="pv-body"><div id="pv-pages"></div></div>
+<div class="pv-foot"><span class="muted pv-note">Pratonton ini anggaran. Fail sebenar mungkin sedikit berbeza susun aturnya.</span><span class="row"><button type="button" class="btn ghost" data-act="pvclose">Tutup</button><a class="btn" id="pv-dl" href="#" download>Muat turun</a></span></div>
+</div>
+</div>
+
+<script id="page-script">
+(function(){
+var DOCS={
+  kk:"Kertas kerja",kkhema:"Kertas kerja (format HEMA)",skp:"Surat kelulusan dan peruntukan",ska:"Surat kelulusan menjalankan aktiviti",
+  slkk:"Surat pernyataan sebab lewat kertas kerja",spin:"Surat kelulusan pindaan program",poster:"Poster / banner program",
+  peserta:"Senarai peserta program",skprog:"Surat kelulusan program (dari HEP)",
+  lbg:"Laporan bergambar program",lkew:"Laporan implikasi kewangan program",slsp:"Surat pernyataan sebab lewat surat-surat program"
+};
+var ROUTES={hema:"Hantar kepada HEMA","hep-k":"HEP, melibatkan kewangan","hep-t":"HEP, tidak melibatkan kewangan"};
+var FILES={
+  kk:{f:"kertas-kerja.docx",n:"SAMPLE KERTAS KERJA PROGRAM [NAMA].docx",pv:"kertas-kerja",pg:7},
+  kkhema:{f:"contoh-kertas-kerja-hema.pdf",n:"Contoh Kertas Kerja HEMA - Harmoni Vibe.pdf",pv:"contoh-kertas-kerja-hema",pg:8},
+  skp:{f:"surat-kelulusan-peruntukan.docx",n:"SAMPLE SURAT PERMOHONAN KELULUSAN DAN PERUNTUKAN PROGRAM [NAMA].docx",pv:"surat-kelulusan-peruntukan",pg:2},
+  ska:{f:"surat-kelulusan-luar-uitm.docx",n:"SAMPLE SURAT KELULUSAN PROGRAM LUAR UITM [NAMA].docx",pv:"surat-kelulusan-luar-uitm",pg:2},
+  slkk:{f:"surat-lewat-kertas-kerja.docx",n:"SAMPLE SURAT PERNYATAAN SEBAB KELEWATAN KERTAS KERJA [NAMA].docx",pv:"surat-lewat-kertas-kerja",pg:2},
+  poster:{f:"contoh-poster.jpg",n:"Contoh Poster Harmoni.jpg",label:"Contoh",img:"templates/contoh-poster.jpg"},
+  lbg:{f:"laporan-bergambar.docx",n:"SAMPLE LAPORAN BERGAMBAR PROGRAM [NAMA].docx",pv:"laporan-bergambar",pg:3},
+  lkew:{f:"laporan-implikasi-kewangan.docx",n:"SAMPLE LAPORAN IMPLIKASI KEWANGAN PROGRAM [NAMA].docx",pv:"laporan-implikasi-kewangan",pg:1},
+  slsp:{f:"surat-lewat-surat-program.docx",n:"SAMPLE SURAT PERNYATAAN SEBAB KELEWATAN SURAT-SURAT PROGRAM [NAMA].docx",pv:"surat-lewat-surat-program",pg:2}
+};
+
+
+function lsGet(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+var ui={answers:lsGet("hp-answers",{route:"hep-k",outside:false,transport:false,pindaan:false}),open:lsGet("hp-open",null),confirmDel:null,editTpl:false,newOpen:false};
+var state=lsGet("hp-state",null)||{v:1,programs:[]};state.programs=state.programs||[];state.templates={};
+var canWrite=true,statusMsg="";
+
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function isHep(a){return a.route!=="hema"}
+
+function steps(a){
+  var out=[];
+  out.push({n:1,title:"Kertas kerja",when:"Sebelum program",items:[{id:"1-kk",key:isHep(a)?"kk":"kkhema",note:ROUTES[a.route]}]});
+  if(isHep(a)){
+    var s2=[{id:"2-skp",key:"skp"}];
+    if(a.outside)s2.push({id:"2-ska",key:"ska",note:"Program di luar UiTM. Hantar ke Bangunan Canselori bersama kertas kerja."});
+    out.push({n:2,title:"Surat kelulusan",when:"Sebelum program",items:s2});
+    var s3=[{id:"3-kk",key:"kk",note:"Muat naik di MyHEP"},{id:"3-skp",key:"skp"},{id:"3-slkk",key:"slkk"}];
+    if(a.pindaan)s3.push({id:"3-spin",key:"spin",opt:true});
+    s3.push({id:"3-poster",key:"poster"});
+    out.push({n:3,title:"Hantar di MyHEP",when:"Sebelum program",link:true,items:s3});
+    if(a.transport){
+      var s4=[{id:"4-peserta",key:"peserta"},{id:"4-skprog",key:"skprog"},{id:"4-slkk",key:"slkk"}];
+      if(a.pindaan)s4.push({id:"4-spin",key:"spin",opt:true});
+      out.push({n:4,title:"Pengangkutan UiTM",when:"Sebelum program",items:s4});
+    }
+  }
+  out.push({n:5,title:"Laporan selepas program",when:"Selepas program",after:true,items:[{id:"5-lbg",key:"lbg"},{id:"5-lkew",key:"lkew"},{id:"5-slsp",key:"slsp"}]});
+  return out;
+}
+function allItems(a){var r=[];steps(a).forEach(function(s){r=r.concat(s.items)});return r}
+
+function tplBtn(key){
+  var f=FILES[key];
+  if(f)return '<button type="button" class="tpl" data-act="pv" data-k="'+key+'">'+(f.label?"Lihat contoh":"Lihat templat")+'</button>';
+  return '<span class="tpl none">Tiada templat</span>';
+}
+function pages(f){var r=[];if(f.img)r.push(f.img);else for(var i=1;i<=f.pg;i++)r.push("preview/"+f.pv+"-"+i+".jpg");return r}
+var lastFocus=null;
+function openPreview(key,from){
+  var f=FILES[key],m=document.getElementById("pv");if(!f||!m)return;lastFocus=from||null;
+  var ext=f.f.split(".").pop().toUpperCase();
+  document.getElementById("pv-title").textContent=DOCS[key];
+  document.getElementById("pv-meta").textContent=(f.img?"Gambar":ext==="PDF"?"Contoh PDF":"Templat Word")+(f.pg?" · "+f.pg+" halaman":"");
+  var dl=document.getElementById("pv-dl");dl.href="templates/"+f.f;dl.setAttribute("download",f.n);
+  dl.textContent="Muat turun "+(f.img?"gambar":ext==="DOCX"?"(Word)":"("+ext+")");
+  document.getElementById("pv-pages").innerHTML=pages(f).map(function(src,i,a){return '<figure><img src="'+src+'" alt="'+esc(DOCS[key])+', halaman '+(i+1)+' daripada '+a.length+'" loading="lazy">'+(a.length>1?'<figcaption>Halaman '+(i+1)+' / '+a.length+'</figcaption>':'')+'</figure>'}).join("");
+  document.getElementById("pv-body").scrollTop=0;
+  m.hidden=false;document.body.style.overflow="hidden";document.getElementById("pv-close").focus();
+}
+function closePreview(){var m=document.getElementById("pv");if(!m||m.hidden)return;m.hidden=true;document.body.style.overflow="";if(lastFocus&&document.contains(lastFocus))lastFocus.focus()}
+function skipNote(a,s){
+  if(!isHep(a))return '<p class="skip">Langkah 2 hingga 4 tidak diperlukan kerana kertas kerja dihantar kepada HEMA.</p>';
+  if(!a.transport)return '<p class="skip">Langkah 4 (pengangkutan UiTM) tidak diperlukan.</p>';
+  return "";
+}
+function renderSteps(a,prog){
+  var html='<div class="steps">',list=steps(a),skipped=false;
+  list.forEach(function(s){
+    if(s.n===5&&!skipped){var k=skipNote(a);if(k){html+=k}skipped=true}
+    html+='<div class="step'+(s.after?" after":"")+'"><span class="num">'+s.n+'</span><div class="shead"><span class="when">'+s.when+'</span><h3>'+esc(s.title)+'</h3>'+
+      (s.link?'<span class="muted" style="font-size:14px">Laman: <a href="https://myhep.uitm.edu.my" target="_blank" rel="noopener">myhep.uitm.edu.my</a></span>':"")+'</div><div class="docs">';
+    s.items.forEach(function(it){
+      var done=prog&&prog.done&&prog.done[it.id];
+      html+='<div class="doc'+(done?" done":"")+'">'+
+        (prog?'<input type="checkbox" id="cb-'+esc(prog.id)+'-'+it.id+'" data-act="tick" data-p="'+esc(prog.id)+'" data-i="'+it.id+'"'+(done?" checked":"")+(canWrite?"":" disabled")+' aria-label="'+esc(DOCS[it.key])+'">':"")+
+        '<div class="dt"><span class="dn">'+esc(DOCS[it.key])+'</span>'+(it.note?'<span class="dnote">'+esc(it.note)+'</span>':"")+'</div>'+
+        (it.opt?'<span class="tag">Pindaan</span>':"")+tplBtn(it.key)+'</div>';
+    });
+    html+='</div></div>';
+  });
+  return html+'</div>';
+}
+
+function seg(name,opts,val){
+  return '<div class="seg" role="group">'+opts.map(function(o){return '<button type="button" data-act="ans" data-k="'+name+'" data-v="'+o[0]+'" aria-pressed="'+(String(val)===o[0])+'">'+esc(o[1])+'</button>'}).join("")+'</div>';
+}
+function questions(a){
+  var h='<div class="qs"><div class="q"><label class="ql">Kertas kerja dihantar kepada?</label>'+seg("route",[["hema","HEMA"],["hep-k","HEP (ada kewangan)"],["hep-t","HEP (tiada kewangan)"]],a.route)+'</div>';
+  if(isHep(a)){
+    h+='<div class="q"><label class="ql">Lokasi program?</label>'+seg("outside",[["false","Dalam UiTM"],["true","Luar UiTM"]],a.outside)+'</div>'+
+       '<div class="q"><label class="ql">Guna pengangkutan UiTM?</label>'+seg("transport",[["false","Tidak"],["true","Ya"]],a.transport)+'</div>'+
+       '<div class="q"><label class="ql">Ada pindaan program?</label>'+seg("pindaan",[["false","Tiada"],["true","Ada"]],a.pindaan)+'</div>';
+  }
+  return h+'</div>';
+}
+
+function viewSemak(){
+  var a=ui.answers,n=allItems(a).length;
+  var h='<section class="panel"><div><h2>Apa yang program awak perlukan?</h2><p class="muted" style="margin:4px 0 0">Jawab soalan di bawah. Senarai dokumen dikemas kini serta-merta.</p></div>'+questions(a)+'</section>';
+  h+='<section style="display:flex;flex-direction:column;gap:16px"><div class="row" style="justify-content:space-between"><h2>'+n+' dokumen diperlukan</h2>'+
+     (canWrite?'<button class="btn" data-act="newOpen">Simpan sebagai program</button>':"")+'</div>';
+  if(ui.newOpen&&canWrite)h+=newForm();
+  h+=renderSteps(a,null)+'</section>';
+  return h;
+}
+function newForm(){
+  return '<div class="panel"><h3>Program baharu</h3><p class="muted" style="margin:0;font-size:14px">Jawapan di atas akan digunakan untuk senarai semak program ini.</p><div class="row">'+
+    '<div class="field"><label for="np-name">Nama program</label><input type="text" id="np-name" placeholder="Contoh: Harmoni Care 2.0"></div>'+
+    '<div class="field" style="flex:0 1 200px"><label for="np-date">Tarikh program</label><input type="date" id="np-date"></div></div>'+
+    '<div class="row"><button class="btn" data-act="create">Cipta program</button><button class="btn ghost" data-act="newClose">Batal</button></div></div>';
+}
+
+function fmtDate(d){if(!d)return "Tarikh belum ditetapkan";try{return new Date(d+"T00:00:00").toLocaleDateString("ms-MY",{day:"numeric",month:"long",year:"numeric"})}catch(e){return d}}
+function viewProgram(){
+  var h='<div class="row" style="justify-content:space-between"><div><h2>Program berjalan</h2><p class="muted" style="margin:4px 0 0">Tandakan dokumen yang sudah siap. Senarai ini peribadi: disimpan dalam pelayar dan peranti awak sahaja.</p></div>'+
+    '<a class="btn" href="#semak" style="text-decoration:none">Tambah program</a></div>';
+  if(!state.programs.length){
+    return h+'<div class="empty"><h3 style="color:var(--ink)">Belum ada program</h3><p style="margin:0;max-width:44ch">Pergi ke tab <b>Semak keperluan</b>, jawab soalan tentang program, kemudian tekan <b>Simpan sebagai program</b>.</p></div>';
+  }
+  var list=state.programs.slice().sort(function(x,y){return (x.date||"9999")<(y.date||"9999")?-1:1});
+  h+='<div class="cards">';
+  list.forEach(function(p){
+    var items=allItems(p.answers),done=items.filter(function(i){return p.done&&p.done[i.id]}).length,pct=Math.round(done/items.length*100),open=ui.open===p.id;
+    h+='<article class="card'+(open?" open":"")+'"><button class="chead" data-act="toggle" data-p="'+esc(p.id)+'" aria-expanded="'+open+'">'+
+      '<div class="ct"><h3>'+esc(p.name)+'</h3><span class="pill">'+esc(fmtDate(p.date))+' · '+esc(ROUTES[p.answers.route])+(p.answers.outside?" · Luar UiTM":"")+(p.answers.transport?" · Pengangkutan UiTM":"")+'</span>'+
+      '<div class="bar" aria-hidden="true"><i style="width:'+pct+'%"></i></div></div>'+
+      '<span class="count'+(done===items.length?" full":"")+'">'+done+'/'+items.length+'</span><span class="chev" aria-hidden="true">›</span></button>';
+    if(open){
+      h+='<div class="cbody">'+renderSteps(p.answers,p);
+      if(canWrite){
+        h+=ui.confirmDel===p.id?
+          '<div class="row banner" style="justify-content:space-between"><span>Padam program “'+esc(p.name)+'” dan senarai semaknya?</span><span class="row"><button class="btn danger" data-act="del" data-p="'+esc(p.id)+'">Padam</button><button class="btn ghost" data-act="delCancel">Batal</button></span></div>':
+          '<div class="row"><button class="btn ghost" data-act="delAsk" data-p="'+esc(p.id)+'">Padam program</button></div>';
+      }
+      h+='</div>';
+    }
+    h+='</article>';
+  });
+  return h+'</div>';
+}
+
+function viewTemplat(){
+  var keys=Object.keys(DOCS),missing=keys.filter(function(k){return !FILES[k]});
+  var h='<div><h2>Templat dan contoh surat</h2><p class="muted" style="margin:4px 0 0">Muat turun templat Word, kemudian gantikan bahagian bertanda [....] dengan maklumat program.</p></div>';
+  h+='<div class="tlist">'+keys.filter(function(k){return FILES[k]}).map(function(k){return '<div class="trow"><span class="dn">'+esc(DOCS[k])+'</span>'+tplBtn(k)+'</div>'}).join("")+'</div>';
+  h+='<div class="panel"><h3>Contoh poster</h3><img src="templates/contoh-poster.jpg" alt="Contoh poster program Harmoni: Healing Sat di Surau Perindu, setiap minggu selepas solat Jumaat" style="max-width:320px;width:100%;border-radius:10px;border:1px solid var(--line)"></div>';
+  h+='<div><h2>Belum ada templat</h2><p class="muted" style="margin:4px 0 0">Dokumen ini tiada templat lagi. Rujuk Setiausaha.</p></div>';
+  keys=missing;
+  if(false){
+    h+='<div class="tlist">'+keys.map(function(k){return '<div class="trow"><label class="dn" for="tp-'+k+'">'+esc(DOCS[k])+'</label><input type="url" id="tp-'+k+'" data-k="'+k+'" placeholder="https://drive.google.com/…" value="'+esc(state.templates[k]||"")+'"></div>'}).join("")+'</div>'+
+      '<p class="muted" style="margin:0;font-size:13px">Pastikan fail Drive dikongsi kepada AJK ("Sesiapa yang ada pautan" atau e-mel AJK). Biarkan kosong jika tiada templat.</p>'+
+      '<div class="row"><button class="btn" data-act="saveTpl">Simpan pautan</button><button class="btn ghost" data-act="cancelTpl">Batal</button></div>';
+  }else{
+    h+='<div class="tlist">'+keys.map(function(k){return '<div class="trow"><span class="dn">'+esc(DOCS[k])+'</span>'+tplBtn(k)+'</div>'}).join("")+'</div>';
+  }
+  return h;
+}
+
+function route(){var r=(location.hash||"").replace("#","");return ["semak","program","templat"].indexOf(r)>=0?r:"semak"}
+function render(){
+  var r=route(),app=document.getElementById("app"),y=window.scrollY;
+  var tabs=[["semak","Semak keperluan"],["program","Program ("+state.programs.length+")"],["templat","Templat"]];
+  var h='<header class="top"><div class="wrap"><span class="eyebrow">Persatuan Mahasiswa Harmoni UiTM Shah Alam</span><h1>Panduan Program</h1>'+
+    '<p class="lede">Surat dan dokumen untuk menghantar program, dari kertas kerja hingga laporan selepas program.</p>'+
+    '<nav class="tabs">'+tabs.map(function(t){return '<a href="#'+t[0]+'"'+(r===t[0]?' aria-current="page"':"")+'>'+t[1]+'</a>'}).join("")+'</nav></div></header><main><div class="wrap">';
+  if(statusMsg)h+='<p class="status" role="status">'+esc(statusMsg)+'</p>';
+  h+=r==="program"?viewProgram():r==="templat"?viewTemplat():viewSemak();
+  h+='</div></main>';
+  var keep={};["np-name","np-date"].forEach(function(id){var el=document.getElementById(id);if(el)keep[id]=el.value});
+  app.innerHTML=h;
+  Object.keys(keep).forEach(function(id){var el=document.getElementById(id);if(el)el.value=keep[id]});
+  window.scrollTo(0,y);
+}
+
+function save(){
+  var ok=true;
+  try{localStorage.setItem("hp-state",JSON.stringify({v:1,programs:state.programs}))}catch(e){ok=false}
+  statusMsg=ok?"":"Pelayar ini tidak membenarkan simpanan, jadi senarai semak akan hilang bila halaman ditutup.";
+  render();
+}
+
+document.addEventListener("click",function(ev){
+  var t=ev.target.closest("[data-act]");if(!t)return;var act=t.getAttribute("data-act");
+  if(act==="tick")return;
+  if(act==="pv"){openPreview(t.getAttribute("data-k"),t);return}
+  if(act==="pvclose"){closePreview();return}
+  if(act==="ans"){var k=t.getAttribute("data-k"),v=t.getAttribute("data-v");ui.answers[k]=k==="route"?v:v==="true";lsSet("hp-answers",ui.answers);render()}
+  else if(act==="newOpen"){ui.newOpen=true;render();var n=document.getElementById("np-name");if(n)n.focus()}
+  else if(act==="newClose"){ui.newOpen=false;render()}
+  else if(act==="create"){
+    var name=(document.getElementById("np-name").value||"").trim(),date=document.getElementById("np-date").value||"";
+    if(!name){statusMsg="Masukkan nama program dahulu.";render();document.getElementById("np-name").focus();return}
+    var id="p"+Date.now().toString(36);
+    state.programs.push({id:id,name:name.slice(0,120),date:date,answers:JSON.parse(JSON.stringify(ui.answers)),done:{}});
+    ui.newOpen=false;ui.open=id;lsSet("hp-open",id);location.hash="program";save();
+  }
+  else if(act==="toggle"){var p=t.getAttribute("data-p");ui.open=ui.open===p?null:p;ui.confirmDel=null;lsSet("hp-open",ui.open);render()}
+  else if(act==="delAsk"){ui.confirmDel=t.getAttribute("data-p");render()}
+  else if(act==="delCancel"){ui.confirmDel=null;render()}
+  else if(act==="del"){var d=t.getAttribute("data-p");state.programs=state.programs.filter(function(p){return p.id!==d});ui.confirmDel=null;save()}
+  else if(act==="editTpl"){ui.editTpl=true;render()}
+  else if(act==="cancelTpl"){ui.editTpl=false;render()}
+  else if(act==="saveTpl"){
+    var bad=false,next={};
+    document.querySelectorAll("input[data-k]").forEach(function(i){var v=i.value.trim();if(!v)return;if(!/^https:\/\//i.test(v)){bad=true;return}next[i.getAttribute("data-k")]=v});
+    if(bad){statusMsg="Setiap pautan mesti bermula dengan https://";render();return}
+    state.templates=next;ui.editTpl=false;save();
+  }
+});
+document.addEventListener("change",function(ev){
+  var t=ev.target;if(t.getAttribute("data-act")!=="tick")return;
+  if(!canWrite){t.checked=!t.checked;return}
+  var p=state.programs.find(function(x){return x.id===t.getAttribute("data-p")});if(!p)return;
+  p.done=p.done||{};var i=t.getAttribute("data-i");if(t.checked)p.done[i]=true;else delete p.done[i];
+  save();
+});
+document.addEventListener("keydown",function(e){if(e.key==="Escape")closePreview()});
+window.addEventListener("hashchange",function(){statusMsg="";render()});
+render();
+
+})();
+</script>
+</body>
+</html>
